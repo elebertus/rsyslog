@@ -1,0 +1,7 @@
+module(load="omudpspoof")
+template(name="udp_to_long_term" type="string" string="%msg%")
+
+ruleset(name="<%= @rsyslog_protocol %>-<%= @rsyslog_port %>"){
+action(type="omudpspoof" target="<%= @long_term_server %>" template="udp_to_long_term")
+}
+input(type="imudp" port="<%= node.rsys" ruleset="udp-514")

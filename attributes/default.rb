@@ -17,34 +17,47 @@
 # limitations under the License.
 #
 
-default["rsyslog"]["log_dir"]          = "/srv/rsyslog"
-default["rsyslog"]["server"]           = false
-default["rsyslog"]["protocol"]         = "tcp"
-default["rsyslog"]["port"]             = "514"
-default["rsyslog"]["server_ip"]        = nil
-default["rsyslog"]["server_search"]    = "role:loghost"
-default["rsyslog"]["remote_logs"]      = true
-default["rsyslog"]["per_host_dir"]     = "%$YEAR%/%$MONTH%/%$DAY%/%HOSTNAME%"
-default["rsyslog"]["max_message_size"] = "2k"
-default["rsyslog"]["preserve_fqdn"]    = "off"
+default.rsyslog.log_dir                              = "/var/log/riot/rsyslog"
+default.rsyslog.server                               = false
+default.rsyslog.protocol                             = "udp"
+default.rsyslog.port                                 = "514"
+default.rsyslog.server_ip                            = nil
+default.rsyslog.server_search                        = "role:loghost"
+default.rsyslog.remote_logs                          = true
+default.rsyslog.per_host_dir                         = "%fromhost%/%$YEAR%/%$MONTH%/%$DAY%"
+default.rsyslog.max_message_size                     = "2k"
+default.rsyslog.preserve_fqdn                        = "off"
+default.rsyslog.version                              = "v7"
+default.rsyslog.escape_control_characters_on_receive = "off"
+
+# Collect stats every 60 seconds. This might need
+# to be lower or higher depending on load and
+# desired frequency of reporting.
+default.rsyslog.stats.interval                       = "60"
 
 # The most likely platform-specific attributes
-default["rsyslog"]["service_name"]     = "rsyslog"
-default["rsyslog"]["user"] = "root"
-default["rsyslog"]["group"] = "adm"
-default["rsyslog"]["priv_seperation"] = false
-default["rsyslog"]["defaults_file"] = "/etc/default/rsyslog"
+default.rsyslog.service_name                         = "rsyslog"
+default.rsyslog.user                                 = "root"
+default.rsyslog.group                                = "root"
+default.rsyslog.priv_seperation                      = false
+default.rsyslog.defaults_file                        = "/etc/default/rsyslog"
 
-case node["platform"]
+# Repo configs
+default.rsyslog.repo.devel_repo_url                  = "http://rpms.adiscon.com/v7-devel/epel-$releasever/$basearch"
+default.rsyslog.repo.stable_repo_url                 = "http://rpms.adiscon.com/v7-stable/epel-$releasever/$basearch"
+
+# Log rotate settings
+default.rsyslog.log_rotate.rotate                    = "2"
+case node.platform
 when "ubuntu"
   # syslog user introduced with natty package
-  if node['platform_version'].to_f < 10.10 then
-    default["rsyslog"]["user"] = "syslog"
-    default["rsyslog"]["group"] = "adm"
-    default["rsyslog"]["priv_seperation"] = true
+  if node.platform_version.to_f < 10.10 then
+    default.rsyslog.user = "syslog"
+    default.rsyslog.group = "adm"
+    default.rsyslog.priv_seperation = true
   end
 when "redhat"
-  default["rsyslog"]["defaults_file"] = "/etc/sysconfig/rsyslog"
+  default.rsyslog.defaults_file = "/etc/sysconfig/rsyslog"
 when "arch"
-  default["rsyslog"]["service_name"] = "rsyslogd"
+  default.rsyslog.service_name = "rsyslogd"
 end

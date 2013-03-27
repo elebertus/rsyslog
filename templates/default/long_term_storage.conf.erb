@@ -1,0 +1,13 @@
+template(name="long_term_storage" type="string" string="<%= node.rsyslog.log_dir %>/<%= node.rsyslog.per_host_dir %>/%fromhost%-%syslogpriority-text%.log")
+template(name="default_udp" type="list") {
+  constant(value="[")
+  property(name="fromhost")
+  constant(value="] ")
+  property(name="msg")
+  constant(value="\n")
+  }
+
+ruleset(name="udp-<%= node.rsyslog.port %>"){
+    action(type="omfile" DynaFile="long_term_storage" template="default_udp")
+}
+input(type="imudp" port="<%= node.rsyslog.port %>" ruleset="udp-<%= node.rsyslog.port %>")
